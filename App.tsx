@@ -549,7 +549,7 @@ const App: React.FC = () => {
         )}
       </main>
 
-      <div className="pb-20">
+      <div className="mt-auto pb-0">
         <Footer onLegalClick={(page) => { setLegalPage(page); setShowLegal(true); }} />
       </div>
 

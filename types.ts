@@ -10,6 +10,7 @@ export interface LiveMatch {
   odds2: string;
   isLive: boolean;
   sport: 'Soccer' | 'Cricket' | 'Tennis' | 'Basketball' | 'American Football' | 'Baseball' | 'Hockey' | 'Esports';
+  league?: string;
   stats?: MatchStats;
   formHome?: string[];
   formAway?: string[];
