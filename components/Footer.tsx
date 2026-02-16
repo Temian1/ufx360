@@ -31,80 +31,26 @@ const Footer: React.FC<FooterProps> = ({ onLegalClick }) => {
         <footer className="bg-gradient-to-b from-gray-900 to-black text-gray-400 mt-auto pb-20">
             {/* Main Footer Content */}
             <div className="max-w-6xl mx-auto px-4 pt-10 pb-6">
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-8 mb-8">
-                    {/* Brand & About */}
-                    <div className="col-span-2 md:col-span-1">
-                        <div className="font-black text-2xl tracking-tighter italic text-white mb-3">
+                {/* Brand & Social */}
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
+                    <div className="flex items-center gap-4">
+                        <div className="font-black text-2xl tracking-tighter italic text-white">
                             <span className="text-white">upx</span><span className="text-bet-yellow">365</span>
                         </div>
-                        <p className="text-xs leading-relaxed text-gray-500 mb-4">
-                            Your trusted destination for premium sports betting. Experience thousands of live markets, industry-leading odds, and real-time streaming across football, cricket, tennis, basketball, and more.
+                        <p className="text-xs text-gray-500 max-w-sm">
+                            Your trusted destination for premium sports betting.
                         </p>
-                        {/* Social Icons */}
-                        <div className="flex items-center gap-2">
-                            <a href="#" className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-gray-500 hover:text-white hover:bg-white/10 hover:border-white/20 transition-all duration-200">
-                                <XIcon />
-                            </a>
-                            <a href="#" className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-gray-500 hover:text-[#229ED9] hover:bg-[#229ED9]/10 hover:border-[#229ED9]/30 transition-all duration-200">
-                                <TelegramIcon />
-                            </a>
-                            <a href="#" className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-gray-500 hover:text-[#5865F2] hover:bg-[#5865F2]/10 hover:border-[#5865F2]/30 transition-all duration-200">
-                                <DiscordIcon />
-                            </a>
-                        </div>
                     </div>
-
-                    {/* Quick Links */}
-                    <div>
-                        <h4 className="text-white font-bold mb-3 uppercase text-[11px] tracking-widest">{t('footer.support')}</h4>
-                        <ul className="space-y-2 text-xs">
-                            <li><button onClick={() => onLegalClick('terms')} className="hover:text-bet-yellow transition-colors">{t('footer.terms')}</button></li>
-                            <li><button onClick={() => onLegalClick('privacy')} className="hover:text-bet-yellow transition-colors">{t('footer.privacy')}</button></li>
-                            <li><button onClick={() => onLegalClick('rules')} className="hover:text-bet-yellow transition-colors">{t('footer.rules')}</button></li>
-                            <li><a href="#" className="hover:text-bet-yellow transition-colors">{t('footer.contact')}</a></li>
-                            <li><a href="#" className="hover:text-bet-yellow transition-colors">FAQ</a></li>
-                            <li><a href="#" className="hover:text-bet-yellow transition-colors">Live Chat</a></li>
-                        </ul>
-                    </div>
-
-                    {/* Responsibility */}
-                    <div>
-                        <h4 className="text-white font-bold mb-3 uppercase text-[11px] tracking-widest">{t('footer.responsibility')}</h4>
-                        <ul className="space-y-2 text-xs">
-                            <li><button onClick={() => onLegalClick('responsible-gaming')} className="hover:text-bet-yellow transition-colors">{t('footer.responsible_gaming')}</button></li>
-                            <li><a href="#" className="hover:text-bet-yellow transition-colors">{t('footer.self_exclusion')}</a></li>
-                            <li><a href="#" className="hover:text-bet-yellow transition-colors">{t('footer.fairness')}</a></li>
-                            <li><a href="#" className="hover:text-bet-yellow transition-colors">{t('footer.dispute')}</a></li>
-                            <li><a href="#" className="hover:text-bet-yellow transition-colors">Deposit Limits</a></li>
-                            <li><a href="#" className="hover:text-bet-yellow transition-colors">Session Reminders</a></li>
-                        </ul>
-                    </div>
-
-                </div>
-
-                {/* Payment & Security Badges */}
-                <div className="border-t border-white/5 pt-6 mb-6">
-                    <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                        <div className="flex items-center gap-3">
-                            <span className="text-[10px] font-bold text-gray-600 uppercase tracking-wider">Payments</span>
-                            <div className="flex gap-2">
-                                {['credit_card', 'account_balance', 'currency_bitcoin', 'wallet'].map((icon) => (
-                                    <span key={icon} className="w-8 h-6 rounded bg-white/5 border border-white/10 flex items-center justify-center">
-                                        <span className="material-symbols-outlined text-[14px] text-gray-600">{icon}</span>
-                                    </span>
-                                ))}
-                            </div>
-                        </div>
-                        <div className="flex items-center gap-3">
-                            <span className="text-[10px] font-bold text-gray-600 uppercase tracking-wider">Certified</span>
-                            <div className="flex gap-2">
-                                {['18_up_rating', 'verified_user', 'lock'].map((icon) => (
-                                    <span key={icon} className="w-8 h-6 rounded bg-white/5 border border-white/10 flex items-center justify-center">
-                                        <span className="material-symbols-outlined text-[14px] text-gray-600">{icon}</span>
-                                    </span>
-                                ))}
-                            </div>
-                        </div>
+                    <div className="flex items-center gap-2">
+                        <a href="#" className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-gray-500 hover:text-white hover:bg-white/10 hover:border-white/20 transition-all duration-200">
+                            <XIcon />
+                        </a>
+                        <a href="#" className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-gray-500 hover:text-[#229ED9] hover:bg-[#229ED9]/10 hover:border-[#229ED9]/30 transition-all duration-200">
+                            <TelegramIcon />
+                        </a>
+                        <a href="#" className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-gray-500 hover:text-[#5865F2] hover:bg-[#5865F2]/10 hover:border-[#5865F2]/30 transition-all duration-200">
+                            <DiscordIcon />
+                        </a>
                     </div>
                 </div>
 
