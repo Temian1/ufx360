@@ -6,6 +6,7 @@ type AccountTab = 'overview' | 'personal' | 'security' | 'limits';
 
 interface AccountViewProps {
   user: User | null;
+  agentProfile?: User | null;
   rgSettings: ResponsibleGamingSettings;
   onUpdateRg: (settings: ResponsibleGamingSettings) => void;
   onUpdateProfile: (updates: Partial<User>) => void;
@@ -20,7 +21,7 @@ const tabConfig: { key: AccountTab; icon: string; label: string }[] = [
   { key: 'limits', icon: 'tune', label: 'Limits' },
 ];
 
-const AccountView: React.FC<AccountViewProps> = ({ user, rgSettings, onUpdateRg, onUpdateProfile, onDeposit, onWithdraw }) => {
+const AccountView: React.FC<AccountViewProps> = ({ user, agentProfile, rgSettings, onUpdateRg, onUpdateProfile, onDeposit, onWithdraw }) => {
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<AccountTab>('overview');
   const [profileForm, setProfileForm] = useState({
@@ -189,11 +190,13 @@ const AccountView: React.FC<AccountViewProps> = ({ user, rgSettings, onUpdateRg,
                 </select>
                 <div className="flex gap-2">
                   <button
-                    onClick={() => onDeposit(parseFloat(walletAmount || '0'), walletMethod)}
-                    className="flex-1 sm:flex-none bg-primary hover:bg-primary/90 text-white rounded-xl px-4 py-2.5 text-xs font-bold transition-colors active:scale-95 flex items-center gap-1.5 justify-center"
+                    type="button"
+                    disabled
+                    className="flex-1 sm:flex-none bg-gray-100 dark:bg-white/5 text-gray-400 dark:text-gray-500 rounded-xl px-4 py-2.5 text-xs font-bold flex items-center gap-1.5 justify-center border border-gray-200 dark:border-white/10 cursor-not-allowed"
+                    title="Deposit is agent based only"
                   >
-                    <span className="material-symbols-outlined text-sm">add_card</span>
-                    {t('account.deposit')}
+                    <span className="material-symbols-outlined text-sm">support_agent</span>
+                    Agent Deposit Only
                   </button>
                   <button
                     onClick={() => onWithdraw(parseFloat(walletAmount || '0'), walletMethod)}
@@ -204,6 +207,16 @@ const AccountView: React.FC<AccountViewProps> = ({ user, rgSettings, onUpdateRg,
                   </button>
                 </div>
               </div>
+              <p className="text-[11px] text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20 rounded-lg px-3 py-2">
+                Deposits are handled by your assigned agent only.
+              </p>
+              {agentProfile && (
+                <div className="text-[11px] text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-white/[0.03] border border-gray-100 dark:border-white/5 rounded-lg px-3 py-2">
+                  <span className="font-bold">Agent:</span> {agentProfile.fullName || agentProfile.username}
+                  {agentProfile.phone ? ` | ${agentProfile.phone}` : ''}
+                  {agentProfile.email ? ` | ${agentProfile.email}` : ''}
+                </div>
+              )}
             </div>
 
             {/* Account Stats */}

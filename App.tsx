@@ -1,10 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Header from './components/Header';
 import SubHeader from './components/SubHeader';
 import Hero from './components/Hero';
-import SportsTabs from './components/SportsTabs';
-import FeaturedMatches from './components/FeaturedMatches';
-import LiveMatches from './components/LiveMatches';
+import GamesGrid from './components/GamesGrid';
 import BottomNav from './components/BottomNav';
 import ThemeToggle from './components/ThemeToggle';
 import MatchDetails from './components/MatchDetails';
@@ -18,10 +16,7 @@ import InPlayView from './components/InPlayView';
 import WalletView from './components/WalletView';
 import PromotionsView from './components/PromotionsView';
 import AccountView from './components/AccountView';
-import QuickActionsBar from './components/QuickActionsBar';
 import FeaturedView from './components/FeaturedView';
-import HomeExtraLists from './components/HomeExtraLists';
-import SearchModal from './components/SearchResultsPanel';
 import NotificationsPanel from './components/NotificationsPanel';
 import Footer from './components/Footer';
 import LegalPages from './components/LegalPages';
@@ -49,9 +44,6 @@ const App: React.FC = () => {
   const [matches, setMatches] = useState<LiveMatch[]>(demoMatches);
   const [betSelections, setBetSelections] = useState<BetSelection[]>([]);
   const [placedBets, setPlacedBets] = useState<PlacedBet[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [searchResults, setSearchResults] = useState<LiveMatch[]>([]);
-  const [searchLoading, setSearchLoading] = useState(false);
   const [selectedSport, setSelectedSport] = useState<string>('All');
 
   const [allUsers, setAllUsers] = useState<User[]>([]);
@@ -64,7 +56,6 @@ const App: React.FC = () => {
   
   const [showLegal, setShowLegal] = useState(false);
   const [legalPage, setLegalPage] = useState<'terms' | 'privacy' | 'responsible-gaming' | 'rules'>('terms');
-  const [showSearchModal, setShowSearchModal] = useState(false);
 
   useEffect(() => {
     const savedUser = localStorage.getItem('currentUser');
@@ -106,30 +97,6 @@ const App: React.FC = () => {
       }
     }
   }, []);
-
-  useEffect(() => {
-    const term = searchTerm.trim().toLowerCase();
-    if (!term) {
-      setSearchResults([]);
-      setSearchLoading(false);
-      return;
-    }
-
-    setSearchLoading(true);
-    const timer = setTimeout(() => {
-      const results = matches
-        .filter((m) =>
-          m.team1.toLowerCase().includes(term) ||
-          m.team2.toLowerCase().includes(term) ||
-          m.sport.toLowerCase().includes(term),
-        )
-        .slice(0, 20);
-      setSearchResults(results);
-      setSearchLoading(false);
-    }, 250);
-
-    return () => clearTimeout(timer);
-  }, [searchTerm, matches]);
 
   const saveUsers = (users: User[]) => {
     setAllUsers(users);
@@ -379,7 +346,7 @@ const App: React.FC = () => {
     setCurrentView('all-sports');
   };
 
-  const handleHeroNavigate = (target: 'featured' | 'promos' | 'all-sports') => {
+  const handleHeroNavigate = (target: 'featured' | 'promos' | 'all-sports' | 'in-play') => {
     if (target === 'all-sports') {
       setSelectedSport('All');
     }
@@ -395,6 +362,10 @@ const App: React.FC = () => {
 
   const handleWalletChange = (amount: number, type: 'Deposit' | 'Withdraw', method: 'Stripe' | 'PayPal' | 'Crypto') => {
     if (!currentUser || !Number.isFinite(amount) || amount <= 0) return;
+    if (type === 'Deposit' && currentUser.role === 'Player') {
+      addNotification('warning', 'Agent Deposit Required', 'Deposits are agent-based only. Please contact your assigned agent.');
+      return;
+    }
 
     const signed = type === 'Deposit' ? amount : -amount;
     const updatedUsers = allUsers.map((u) => {
@@ -434,6 +405,17 @@ const App: React.FC = () => {
     saveUsers(updatedUsers);
   };
 
+  const liveCounts = useMemo(() =>
+    matches.filter((m) => m.isLive).reduce<Record<string, number>>((acc, m) => {
+      acc[m.sport] = (acc[m.sport] || 0) + 1;
+      return acc;
+    }, {}),
+  [matches]);
+
+  const assignedAgent = currentUser?.parentId
+    ? allUsers.find((u) => u.id === currentUser.parentId) || null
+    : null;
+
   if (currentUser && (currentUser.role === 'Super Admin' || currentUser.role === 'Admin')) {
     return (
       <AdminDashboard
@@ -457,6 +439,7 @@ const App: React.FC = () => {
         onUpdateBalance={handleUpdateBalance}
         onToggleBlock={handleToggleBlock}
         onSettleBet={handleSettleBet}
+        onUpdateProfile={handleUpdateProfile}
         onLogout={handleLogout}
       />
     );
@@ -502,6 +485,7 @@ const App: React.FC = () => {
         ) : currentView === 'wallet' ? (
           <WalletView
             user={currentUser}
+            agentProfile={assignedAgent}
             transactions={walletTransactions}
             onDeposit={(amt, method) => handleWalletChange(amt, 'Deposit', method)}
             onWithdraw={(amt, method) => handleWalletChange(amt, 'Withdraw', method)}
@@ -513,6 +497,7 @@ const App: React.FC = () => {
         ) : currentView === 'account' ? (
           <AccountView
             user={currentUser}
+            agentProfile={assignedAgent}
             rgSettings={rgSettings}
             onUpdateRg={handleUpdateRg}
             onUpdateProfile={handleUpdateProfile}
@@ -521,31 +506,23 @@ const App: React.FC = () => {
           />
         ) : (
           <>
-            <SubHeader onSearchOpen={() => setShowSearchModal(true)} onSportSelect={handleSportSelect} activeSport={selectedSport} />
-            <div className="p-3 space-y-4">
-              <Hero onNavigate={handleHeroNavigate} />
+            <SubHeader
+              activeCategory="home"
+              onCategorySelect={(cat) => {
+                if (cat === 'sports' || cat === 'soccer' || cat === 'cricket' || cat === 'tennis') handleSportSelect(cat === 'sports' ? 'All' : cat.charAt(0).toUpperCase() + cat.slice(1));
+                else if (cat === 'in-play') setCurrentView('in-play');
+                else if (cat === 'multi') setCurrentView('featured');
+              }}
+              liveCounts={liveCounts}
+            />
+            <div className="p-3 space-y-5">
+              <Hero onNavigate={handleHeroNavigate} matches={matches} />
 
-              <p className="text-xs text-gray-500 dark:text-gray-500 text-center px-2">
+              <GamesGrid />
+
+              <p className="text-xs text-gray-500 dark:text-gray-500 text-center px-2 pb-4">
                 Returns exclude Bet Credits stake. T&Cs, time limits and exclusions apply.
               </p>
-
-              <QuickActionsBar onGoPromos={() => setCurrentView('promos')} onGoWallet={() => setCurrentView('wallet')} onGoAccount={() => setCurrentView('account')} />
-
-              <SportsTabs activeTab={selectedSport} onTabChange={handleSportSelect} />
-
-              <FeaturedMatches onViewAll={() => setCurrentView('featured')} onOpenMoreLegs={() => setCurrentView('featured')} onAddBet={addToBetSlip} />
-
-
-              <HomeExtraLists matches={matches} onMatchSelect={navigateToMatch} />
-
-              <LiveMatches
-                matches={matches}
-                onMatchesUpdate={setMatches}
-                searchTerm={searchTerm}
-                sportFilter={selectedSport}
-                onMatchSelect={navigateToMatch}
-                onAddBet={addToBetSlip}
-              />
             </div>
           </>
         )}
@@ -569,15 +546,6 @@ const App: React.FC = () => {
 
       {showAuthModal && <AuthModal onLogin={handleLogin} onRegister={handleRegister} onClose={() => setShowAuthModal(false)} />}
       {showLegal && <LegalPages initialPage={legalPage} onClose={() => setShowLegal(false)} />}
-      <SearchModal
-        isOpen={showSearchModal}
-        term={searchTerm}
-        loading={searchLoading}
-        results={searchResults}
-        onSearch={setSearchTerm}
-        onMatchSelect={(match) => { navigateToMatch(match); setShowSearchModal(false); setSearchTerm(''); }}
-        onClose={() => { setShowSearchModal(false); setSearchTerm(''); }}
-      />
     </div>
   );
 };

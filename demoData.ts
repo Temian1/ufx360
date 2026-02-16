@@ -132,3 +132,77 @@ export const demoRgSettings: ResponsibleGamingSettings = {
   dailyLossLimit: 150,
   sessionReminderMinutes: 60,
 };
+
+export interface PromoTile {
+  id: string;
+  title: string;
+  image: string;
+  hasLive?: boolean;
+  liveCounts?: Record<string, number>;
+  target: 'all-sports' | 'in-play' | 'featured' | 'promos';
+}
+
+export interface GameTile {
+  id: string;
+  title: string;
+  image: string;
+  provider: string;
+}
+
+export const promoTiles: PromoTile[] = [
+  {
+    id: 'pt-1',
+    title: 'Sports',
+    image: 'https://picsum.photos/seed/upx-sports/800/400',
+    hasLive: true,
+    liveCounts: { Cricket: 3, Soccer: 8, Tennis: 24 },
+    target: 'all-sports',
+  },
+  {
+    id: 'pt-2',
+    title: 'Kabaddi',
+    image: 'https://picsum.photos/seed/upx-kabaddi/800/400',
+    target: 'all-sports',
+  },
+  {
+    id: 'pt-3',
+    title: 'Blog',
+    image: 'https://picsum.photos/seed/upx-blog/800/400',
+    target: 'promos',
+  },
+  {
+    id: 'pt-4',
+    title: 'Virtual Cricket',
+    image: 'https://picsum.photos/seed/upx-vcricket/800/400',
+    hasLive: false,
+    target: 'featured',
+  },
+  {
+    id: 'pt-5',
+    title: 'Live Casino',
+    image: 'https://picsum.photos/seed/upx-casino/800/400',
+    hasLive: true,
+    target: 'in-play',
+  },
+  {
+    id: 'pt-6',
+    title: 'Velki',
+    image: 'https://picsum.photos/seed/upx-velki/800/400',
+    target: 'featured',
+  },
+];
+
+export const gameTiles: GameTile[] = [
+  { id: 'gt-1', title: 'JDB Gaming', image: 'https://picsum.photos/seed/upx-jdb/400/300', provider: 'JDB' },
+  { id: 'gt-2', title: 'Coin Toss', image: 'https://picsum.photos/seed/upx-coin/400/300', provider: 'Kingmaker' },
+  { id: 'gt-3', title: 'Number Matka', image: 'https://picsum.photos/seed/upx-matka/400/300', provider: 'Kingmaker' },
+  { id: 'gt-4', title: 'Bonus Dice', image: 'https://picsum.photos/seed/upx-dice/400/300', provider: 'Kingmaker' },
+  { id: 'gt-5', title: 'Heist', image: 'https://picsum.photos/seed/upx-heist/400/300', provider: 'Kingmaker' },
+  { id: 'gt-6', title: 'Color Game', image: 'https://picsum.photos/seed/upx-color/400/300', provider: 'Kingmaker' },
+  { id: 'gt-7', title: 'Minesweeper', image: 'https://picsum.photos/seed/upx-mine/400/300', provider: 'Kingmaker' },
+  { id: 'gt-8', title: 'Money Coming', image: 'https://picsum.photos/seed/upx-money/400/300', provider: 'Money' },
+  { id: 'gt-9', title: 'Callbreak Quick', image: 'https://picsum.photos/seed/upx-callbreak/400/300', provider: 'JILI' },
+  { id: 'gt-10', title: 'Lucky Ball', image: 'https://picsum.photos/seed/upx-lucky/400/300', provider: 'JILI' },
+  { id: 'gt-11', title: 'Ludo Quick', image: 'https://picsum.photos/seed/upx-ludo/400/300', provider: 'JILI' },
+  { id: 'gt-12', title: 'Number King', image: 'https://picsum.photos/seed/upx-numking/400/300', provider: 'JILI' },
+];

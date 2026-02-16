@@ -4,6 +4,7 @@ import { User, WalletTransaction } from '../types';
 
 interface WalletViewProps {
   user: User | null;
+  agentProfile?: User | null;
   transactions: WalletTransaction[];
   onDeposit: (amount: number, method: 'Stripe' | 'PayPal' | 'Crypto') => void;
   onWithdraw: (amount: number, method: 'Stripe' | 'PayPal' | 'Crypto') => void;
@@ -106,7 +107,7 @@ const tabConfig: { key: Tab; icon: React.FC; label: string }[] = [
   { key: 'transactions', icon: ReceiptIcon, label: 'History' },
 ];
 
-const WalletView: React.FC<WalletViewProps> = ({ user, transactions, onDeposit, onWithdraw, onGoAccount, onGoPromos }) => {
+const WalletView: React.FC<WalletViewProps> = ({ user, agentProfile, transactions, onDeposit, onWithdraw, onGoAccount, onGoPromos }) => {
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<Tab>('overview');
   const [method, setMethod] = useState<Method>('Stripe');
@@ -165,7 +166,8 @@ const WalletView: React.FC<WalletViewProps> = ({ user, transactions, onDeposit, 
     const parsed = parseFloat(amount || '0');
     if (!Number.isFinite(parsed) || parsed <= 0) return;
     if (type === 'deposit') {
-      onDeposit(parsed, method);
+      alert('Deposit is agent-based only. Please contact your assigned agent.');
+      return;
     } else {
       onWithdraw(parsed, method);
     }
@@ -345,7 +347,7 @@ const WalletView: React.FC<WalletViewProps> = ({ user, transactions, onDeposit, 
 
               {/* Payment Method */}
               <div className="grid grid-cols-3 gap-2 mb-4">
-                {(['Stripe', 'PayPal', 'Crypto'] as Method[]).map((m) => {
+                {(activeTab === 'deposit' ? (['Crypto'] as Method[]) : (['Stripe', 'PayPal', 'Crypto'] as Method[])).map((m) => {
                   const MIcon = methodIcons[m];
                   return (
                     <button
@@ -363,6 +365,22 @@ const WalletView: React.FC<WalletViewProps> = ({ user, transactions, onDeposit, 
                   );
                 })}
               </div>
+
+              {activeTab === 'deposit' && (
+                <div className="mb-4 rounded-xl border border-amber-200 dark:border-amber-500/20 bg-amber-50 dark:bg-amber-500/10 p-3">
+                  <p className="text-xs font-bold text-amber-800 dark:text-amber-300">Deposit is agent-based only.</p>
+                  <p className="text-[11px] mt-1 text-amber-700 dark:text-amber-300">
+                    Contact your assigned agent to add funds to your wallet.
+                  </p>
+                  {agentProfile && (
+                    <p className="text-[11px] mt-1 text-amber-800 dark:text-amber-200">
+                      Agent: {agentProfile.fullName || agentProfile.username}
+                      {agentProfile.phone ? ` | ${agentProfile.phone}` : ''}
+                      {agentProfile.email ? ` | ${agentProfile.email}` : ''}
+                    </p>
+                  )}
+                </div>
+              )}
 
               {/* Amount */}
               <div className="mb-4">
@@ -419,7 +437,7 @@ const WalletView: React.FC<WalletViewProps> = ({ user, transactions, onDeposit, 
                 onClick={() => handleTransactionSubmit(activeTab as 'deposit' | 'withdraw')}
                 className="w-full bg-bet-yellow hover:bg-yellow-400 text-gray-900 font-black uppercase py-3 rounded-xl transition-all active:scale-[0.98] text-sm tracking-wide"
               >
-                {activeTab === 'deposit' ? `${t('wallet.deposit_via')} ${method}` : `${t('wallet.withdraw_to')} ${method}`}
+                {activeTab === 'deposit' ? 'Contact Agent For Deposit' : `${t('wallet.withdraw_to')} ${method}`}
               </button>
 
               <p className="text-center text-[10px] text-gray-400 mt-2 flex items-center justify-center gap-1">

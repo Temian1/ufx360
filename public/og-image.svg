@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">upx365 - Live Sports Betting Platform</title>
+  <desc id="desc">upx365 branding card for social sharing.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0f3f32"/>
+      <stop offset="100%" stop-color="#126e51"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <circle cx="1050" cy="90" r="180" fill="#ffdf1b" opacity="0.16"/>
+  <circle cx="170" cy="560" r="220" fill="#ffdf1b" opacity="0.10"/>
+  <text x="90" y="280" fill="#ffffff" font-size="128" font-family="Roboto, Arial, sans-serif" font-style="italic" font-weight="900">upx<tspan fill="#ffdf1b">365</tspan></text>
+  <text x="90" y="360" fill="#e5e7eb" font-size="44" font-family="Roboto, Arial, sans-serif" font-weight="700">Live Sports Betting Platform</text>
+  <text x="90" y="425" fill="#d1d5db" font-size="30" font-family="Roboto, Arial, sans-serif">In-play odds, featured markets, and fast bet slip actions.</text>
+</svg>
