@@ -1,5 +1,5 @@
 import React from 'react';
-import { useTranslation, Language, Currency, OddsFormat } from '../contexts/TranslationContext';
+import { useTranslation } from '../contexts/TranslationContext';
 
 interface FooterProps {
     onLegalClick: (page: 'terms' | 'privacy' | 'responsible-gaming' | 'rules') => void;
@@ -25,13 +25,13 @@ const DiscordIcon = () => (
 );
 
 const Footer: React.FC<FooterProps> = ({ onLegalClick }) => {
-    const { t, language, setLanguage, currency, setCurrency, oddsFormat, setOddsFormat } = useTranslation();
+    const { t } = useTranslation();
 
     return (
         <footer className="bg-gradient-to-b from-gray-900 to-black text-gray-400 mt-auto pb-20">
             {/* Main Footer Content */}
             <div className="max-w-6xl mx-auto px-4 pt-10 pb-6">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-8 mb-8">
                     {/* Brand & About */}
                     <div className="col-span-2 md:col-span-1">
                         <div className="font-black text-2xl tracking-tighter italic text-white mb-3">
@@ -80,54 +80,6 @@ const Footer: React.FC<FooterProps> = ({ onLegalClick }) => {
                         </ul>
                     </div>
 
-                    {/* Settings */}
-                    <div>
-                        <h4 className="text-white font-bold mb-3 uppercase text-[11px] tracking-widest">{t('footer.settings')}</h4>
-                        <div className="space-y-2">
-                            <div className="flex items-center justify-between bg-white/5 px-2.5 py-2 rounded-lg border border-white/10">
-                                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">{t('footer.language')}</span>
-                                <select
-                                    value={language}
-                                    onChange={(e) => setLanguage(e.target.value as Language)}
-                                    className="bg-transparent text-[11px] font-bold text-white focus:outline-none cursor-pointer"
-                                >
-                                    <option className="bg-gray-900" value="en">English</option>
-                                    <option className="bg-gray-900" value="es">Español</option>
-                                    <option className="bg-gray-900" value="fr">Français</option>
-                                    <option className="bg-gray-900" value="de">Deutsch</option>
-                                    <option className="bg-gray-900" value="pt">Português</option>
-                                    <option className="bg-gray-900" value="zh">中文</option>
-                                </select>
-                            </div>
-                            <div className="flex items-center justify-between bg-white/5 px-2.5 py-2 rounded-lg border border-white/10">
-                                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">{t('footer.currency')}</span>
-                                <select
-                                    value={currency}
-                                    onChange={(e) => setCurrency(e.target.value as Currency)}
-                                    className="bg-transparent text-[11px] font-bold text-white focus:outline-none cursor-pointer"
-                                >
-                                    <option className="bg-gray-900" value="USD">USD ($)</option>
-                                    <option className="bg-gray-900" value="EUR">EUR (€)</option>
-                                    <option className="bg-gray-900" value="GBP">GBP (£)</option>
-                                    <option className="bg-gray-900" value="BRL">BRL (R$)</option>
-                                    <option className="bg-gray-900" value="CNY">CNY (¥)</option>
-                                    <option className="bg-gray-900" value="INR">INR (₹)</option>
-                                </select>
-                            </div>
-                            <div className="flex items-center justify-between bg-white/5 px-2.5 py-2 rounded-lg border border-white/10">
-                                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">{t('footer.odds_format')}</span>
-                                <select
-                                    value={oddsFormat}
-                                    onChange={(e) => setOddsFormat(e.target.value as OddsFormat)}
-                                    className="bg-transparent text-[11px] font-bold text-white focus:outline-none cursor-pointer"
-                                >
-                                    <option className="bg-gray-900" value="decimal">Decimal</option>
-                                    <option className="bg-gray-900" value="fractional">Fractional</option>
-                                    <option className="bg-gray-900" value="american">American</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
                 {/* Payment & Security Badges */}
@@ -146,7 +98,7 @@ const Footer: React.FC<FooterProps> = ({ onLegalClick }) => {
                         <div className="flex items-center gap-3">
                             <span className="text-[10px] font-bold text-gray-600 uppercase tracking-wider">Certified</span>
                             <div className="flex gap-2">
-                                {['18_up_rating', 'verified_user', 'lock', 'shield'].map((icon) => (
+                                {['18_up_rating', 'verified_user', 'lock'].map((icon) => (
                                     <span key={icon} className="w-8 h-6 rounded bg-white/5 border border-white/10 flex items-center justify-center">
                                         <span className="material-symbols-outlined text-[14px] text-gray-600">{icon}</span>
                                     </span>

@@ -1,8 +1,8 @@
 import React, { useMemo, useState } from 'react';
 import { ResponsibleGamingSettings, User, WithdrawalRequest } from '../types';
-import { useTranslation } from '../contexts/TranslationContext';
+import { useTranslation, Language, Currency, OddsFormat } from '../contexts/TranslationContext';
 
-type AccountTab = 'overview' | 'personal' | 'security' | 'limits';
+type AccountTab = 'overview' | 'personal' | 'security' | 'limits' | 'settings';
 
 interface AccountViewProps {
   user: User | null;
@@ -20,10 +20,11 @@ const tabConfig: { key: AccountTab; icon: string; label: string }[] = [
   { key: 'personal', icon: 'person', label: 'Profile' },
   { key: 'security', icon: 'shield', label: 'Security' },
   { key: 'limits', icon: 'tune', label: 'Limits' },
+  { key: 'settings', icon: 'settings', label: 'Settings' },
 ];
 
 const AccountView: React.FC<AccountViewProps> = ({ user, agentProfile, pendingWithdrawal, rgSettings, onUpdateRg, onUpdateProfile, onDeposit, onWithdraw }) => {
-  const { t } = useTranslation();
+  const { t, language, setLanguage, currency, setCurrency, oddsFormat, setOddsFormat } = useTranslation();
   const [activeTab, setActiveTab] = useState<AccountTab>('overview');
   const [profileForm, setProfileForm] = useState({
     fullName: user?.fullName || '',
@@ -491,6 +492,59 @@ const AccountView: React.FC<AccountViewProps> = ({ user, agentProfile, pendingWi
                   />
                   <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-gray-400 font-medium">min</span>
                 </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'settings' && (
+          <div className="p-4">
+            <div className="flex items-center gap-2 mb-4">
+              <span className="material-symbols-outlined text-primary dark:text-bet-yellow text-lg">settings</span>
+              <p className="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">{t('footer.settings')}</p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div>
+                <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">{t('footer.language')}</label>
+                <select
+                  value={language}
+                  onChange={(e) => setLanguage(e.target.value as Language)}
+                  className="w-full rounded-xl p-2.5 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-primary/30 text-gray-900 dark:text-white cursor-pointer"
+                >
+                  <option className="bg-white dark:bg-gray-900" value="en">English</option>
+                  <option className="bg-white dark:bg-gray-900" value="es">Español</option>
+                  <option className="bg-white dark:bg-gray-900" value="fr">Français</option>
+                  <option className="bg-white dark:bg-gray-900" value="de">Deutsch</option>
+                  <option className="bg-white dark:bg-gray-900" value="pt">Português</option>
+                  <option className="bg-white dark:bg-gray-900" value="zh">中文</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">{t('footer.currency')}</label>
+                <select
+                  value={currency}
+                  onChange={(e) => setCurrency(e.target.value as Currency)}
+                  className="w-full rounded-xl p-2.5 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-primary/30 text-gray-900 dark:text-white cursor-pointer"
+                >
+                  <option className="bg-white dark:bg-gray-900" value="USD">USD ($)</option>
+                  <option className="bg-white dark:bg-gray-900" value="EUR">EUR (€)</option>
+                  <option className="bg-white dark:bg-gray-900" value="GBP">GBP (£)</option>
+                  <option className="bg-white dark:bg-gray-900" value="BRL">BRL (R$)</option>
+                  <option className="bg-white dark:bg-gray-900" value="CNY">CNY (¥)</option>
+                  <option className="bg-white dark:bg-gray-900" value="INR">INR (₹)</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">{t('footer.odds_format')}</label>
+                <select
+                  value={oddsFormat}
+                  onChange={(e) => setOddsFormat(e.target.value as OddsFormat)}
+                  className="w-full rounded-xl p-2.5 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-primary/30 text-gray-900 dark:text-white cursor-pointer"
+                >
+                  <option className="bg-white dark:bg-gray-900" value="decimal">Decimal</option>
+                  <option className="bg-white dark:bg-gray-900" value="fractional">Fractional</option>
+                  <option className="bg-white dark:bg-gray-900" value="american">American</option>
+                </select>
               </div>
             </div>
           </div>
