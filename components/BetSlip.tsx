@@ -16,6 +16,7 @@ const BetSlip: React.FC<BetSlipProps> = ({ selections, onRemove, onClose, onPlac
   const [stake, setStake] = useState<string>('');
   const [isExpanded, setIsExpanded] = useState(true);
   const [isFullScreen, setIsFullScreen] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(false);
 
   if (selections.length === 0) return null;
 
@@ -48,7 +49,39 @@ const BetSlip: React.FC<BetSlipProps> = ({ selections, onRemove, onClose, onPlac
 
     onPlaceBet(newBet);
     setStake('');
+    setIsMinimized(false);
   };
+
+  const handleMinimize = () => {
+    setIsMinimized(true);
+    setIsFullScreen(false);
+    setIsExpanded(true);
+  };
+
+  const handleRestore = () => {
+    setIsMinimized(false);
+  };
+
+  // Floating minimized icon - positioned below the dark mode toggle
+  if (isMinimized) {
+    return (
+      <div className="fixed bottom-[136px] right-4 z-[70]">
+        <button
+          onClick={handleRestore}
+          className="relative w-12 h-12 rounded-full bg-gradient-to-br from-primary to-emerald-700 dark:from-gray-800 dark:to-gray-900 text-white flex items-center justify-center shadow-lg hover:scale-110 transition-all active:scale-95 border-2 border-white/20 dark:border-bet-yellow/30"
+          title="Open Bet Slip"
+        >
+          <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+          </svg>
+          {/* Badge count */}
+          <span className="absolute -top-1 -right-1 w-5 h-5 bg-bet-yellow text-black text-[10px] font-black rounded-full flex items-center justify-center shadow-sm border border-white dark:border-gray-900">
+            {selections.length}
+          </span>
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className={`fixed z-[70] ${isFullScreen ? 'inset-0' : 'bottom-[56px] left-0 right-0 px-2 pb-2'}`}>
@@ -77,11 +110,11 @@ const BetSlip: React.FC<BetSlipProps> = ({ selections, onRemove, onClose, onPlac
                     <span className={`material-symbols-outlined text-sm transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}>expand_less</span>
                 </button>
                 <button
-                    onClick={onClose}
-                    className="w-7 h-7 rounded bg-white/10 flex items-center justify-center hover:bg-red-500/60"
-                    title={t('betslip.clear')}
+                    onClick={handleMinimize}
+                    className="w-7 h-7 rounded bg-white/10 flex items-center justify-center hover:bg-white/20"
+                    title="Minimize bet slip"
                 >
-                    <span className="material-symbols-outlined text-sm">close</span>
+                    <span className="material-symbols-outlined text-sm">minimize</span>
                 </button>
             </div>
         </div>
@@ -90,7 +123,7 @@ const BetSlip: React.FC<BetSlipProps> = ({ selections, onRemove, onClose, onPlac
       {/* Expanded Content */}
       {isExpanded && (
         <div className={`bg-white dark:bg-surface-dark border-x border-b border-gray-100 dark:border-white/5 shadow-lg overflow-y-auto p-4 animate-in slide-in-from-bottom-5 duration-300 ${isFullScreen ? 'rounded-none h-[calc(100vh-56px)]' : 'rounded-b-2xl max-h-[60vh]'}`}>
-            
+
             {/* Selections List */}
             <div className="space-y-3 mb-6">
                 {selections.map((sel) => (
@@ -105,7 +138,7 @@ const BetSlip: React.FC<BetSlipProps> = ({ selections, onRemove, onClose, onPlac
                                 {sel.odds}
                             </span>
                         </div>
-                        <button 
+                        <button
                             onClick={(e) => { e.stopPropagation(); onRemove(sel.id); }}
                             className="absolute -top-2 -right-2 w-6 h-6 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-red-500 hover:text-white transition shadow-sm opacity-0 group-hover:opacity-100"
                         >
@@ -135,7 +168,7 @@ const BetSlip: React.FC<BetSlipProps> = ({ selections, onRemove, onClose, onPlac
                         </span>
                     </div>
                 </div>
-                
+
                 <div className="relative mb-2 group">
                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold group-focus-within:text-primary transition-colors">$</span>
                     <input
@@ -168,7 +201,7 @@ const BetSlip: React.FC<BetSlipProps> = ({ selections, onRemove, onClose, onPlac
               >
                   {t('betslip.clear')}
               </button>
-              <button 
+              <button
                   onClick={handlePlaceBet}
                   className="col-span-2 bg-gradient-to-r from-bet-yellow to-yellow-400 hover:from-yellow-300 hover:to-yellow-500 text-gray-900 font-black uppercase text-sm py-3.5 rounded-xl shadow-lg shadow-yellow-500/20 active:scale-95 transition-all flex justify-center items-center gap-2 group"
               >

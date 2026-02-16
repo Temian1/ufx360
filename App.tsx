@@ -533,7 +533,7 @@ const App: React.FC = () => {
 
               <SportsTabs activeTab={selectedSport} onTabChange={handleSportSelect} />
 
-              <FeaturedMatches onViewAll={() => setCurrentView('featured')} onOpenMoreLegs={() => setCurrentView('featured')} />
+              <FeaturedMatches onViewAll={() => setCurrentView('featured')} onOpenMoreLegs={() => setCurrentView('featured')} onAddBet={addToBetSlip} />
 
 
               <HomeExtraLists matches={matches} onMatchSelect={navigateToMatch} />
