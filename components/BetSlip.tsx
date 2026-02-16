@@ -52,14 +52,14 @@ const BetSlip: React.FC<BetSlipProps> = ({ selections, onRemove, onClose, onPlac
 
   return (
     <div className={`fixed z-[70] ${isFullScreen ? 'inset-0' : 'bottom-[56px] left-0 right-0 px-2 pb-2'}`}>
-      {/* Minimized View / Header */}
-      <div className={`bg-primary dark:bg-dark-header text-white shadow-2xl ${isFullScreen ? 'rounded-none' : 'rounded-t-lg'}`}>
-        <div className="flex justify-between items-center p-3">
-            <div className="flex items-center gap-2">
-                <div className="bg-bet-yellow text-black font-bold w-6 h-6 rounded-full flex items-center justify-center text-xs">
+      {/* Header Bar */}
+      <div className={`bg-gradient-to-r from-primary to-emerald-700 dark:from-dark-header dark:to-gray-900 text-white shadow-lg ${isFullScreen ? 'rounded-none' : 'rounded-t-2xl'}`}>
+        <div className="flex justify-between items-center px-4 py-3">
+            <div className="flex items-center gap-2.5">
+                <div className="bg-bet-yellow text-black font-black w-7 h-7 rounded-full flex items-center justify-center text-xs shadow-sm">
                     {selections.length}
                 </div>
-                <span className="font-bold text-sm">{t('betslip.title')}</span>
+                <span className="font-bold text-sm tracking-wide">{t('betslip.title')}</span>
             </div>
             <div className="flex items-center gap-2">
                 <button
@@ -89,7 +89,7 @@ const BetSlip: React.FC<BetSlipProps> = ({ selections, onRemove, onClose, onPlac
 
       {/* Expanded Content */}
       {isExpanded && (
-        <div className={`bg-white dark:bg-surface-dark border-x border-b border-gray-200 dark:border-gray-700 shadow-2xl overflow-y-auto p-4 animate-in slide-in-from-bottom-5 duration-300 ${isFullScreen ? 'rounded-none h-[calc(100vh-56px)]' : 'rounded-b-2xl max-h-[70vh]'}`}>
+        <div className={`bg-white dark:bg-surface-dark border-x border-b border-gray-100 dark:border-white/5 shadow-lg overflow-y-auto p-4 animate-in slide-in-from-bottom-5 duration-300 ${isFullScreen ? 'rounded-none h-[calc(100vh-56px)]' : 'rounded-b-2xl max-h-[60vh]'}`}>
             
             {/* Selections List */}
             <div className="space-y-3 mb-6">
@@ -136,15 +136,22 @@ const BetSlip: React.FC<BetSlipProps> = ({ selections, onRemove, onClose, onPlac
                     </div>
                 </div>
                 
-                <div className="relative mb-3 group">
+                <div className="relative mb-2 group">
                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold group-focus-within:text-primary transition-colors">$</span>
-                    <input 
-                        type="number" 
+                    <input
+                        type="number"
                         value={stake}
                         onChange={(e) => setStake(e.target.value)}
                         placeholder={t('betslip.stake_placeholder')}
                         className="w-full bg-white dark:bg-black/40 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white rounded-xl py-3 pl-8 pr-4 text-base font-bold focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all placeholder:font-normal placeholder:text-gray-400"
                     />
+                </div>
+                <div className="flex gap-1.5 mb-3">
+                    {[5, 10, 25, 50, 100].map(amt => (
+                        <button key={amt} onClick={() => setStake(amt.toString())} className="flex-1 py-1.5 rounded-lg bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-xs font-bold text-gray-600 dark:text-gray-300 hover:bg-primary/5 hover:border-primary/30 hover:text-primary dark:hover:text-bet-yellow transition-all active:scale-95">
+                            ${amt}
+                        </button>
+                    ))}
                 </div>
 
                 <div className="flex justify-between items-center pt-3 border-t border-gray-200 dark:border-white/5">

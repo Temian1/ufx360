@@ -1,8 +1,7 @@
 import React from 'react';
 
 interface SubHeaderProps {
-  searchTerm?: string;
-  onSearch?: (term: string) => void;
+  onSearchOpen?: () => void;
   activeSport?: string;
   onSportSelect?: (sport: string) => void;
 }
@@ -19,19 +18,16 @@ const sports = [
   { name: 'All', icon: 'apps', value: 'All' },
 ];
 
-const SubHeader: React.FC<SubHeaderProps> = ({ searchTerm = '', onSearch, onSportSelect, activeSport = 'All' }) => {
+const SubHeader: React.FC<SubHeaderProps> = ({ onSearchOpen, onSportSelect, activeSport = 'All' }) => {
   return (
-    <div className="bg-white dark:bg-dark-header p-3 sticky top-[56px] z-40 border-b border-gray-200 dark:border-gray-700 shadow-sm">
-      <div className="relative mb-3">
-        <span className="material-symbols-outlined absolute left-3 top-2.5 text-gray-400">search</span>
-        <input 
-          value={searchTerm}
-          className="w-full bg-gray-100 dark:bg-black/20 text-gray-900 dark:text-white rounded-full py-2 pl-10 pr-4 text-sm focus:outline-none focus:ring-1 focus:ring-primary border-none placeholder-gray-500" 
-          placeholder="Search teams, leagues or sports..." 
-          type="text"
-          onChange={(e) => onSearch?.(e.target.value)}
-        />
-      </div>
+    <div className="bg-white dark:bg-dark-header p-3 sticky top-[56px] z-40 border-b border-gray-200 dark:border-gray-700/50">
+      <button
+        onClick={onSearchOpen}
+        className="w-full flex items-center gap-2 bg-gray-50 dark:bg-white/5 rounded-xl py-2.5 px-4 mb-3 border border-gray-200 dark:border-white/10 hover:border-gray-300 dark:hover:border-white/20 transition-colors group"
+      >
+        <span className="material-symbols-outlined text-gray-400 group-hover:text-primary dark:group-hover:text-bet-yellow transition-colors text-xl">search</span>
+        <span className="text-sm text-gray-400 font-medium">Search teams, leagues or sports...</span>
+      </button>
       <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
         {sports.map((sport) => (
           <button
@@ -40,7 +36,7 @@ const SubHeader: React.FC<SubHeaderProps> = ({ searchTerm = '', onSearch, onSpor
             className="flex flex-col items-center min-w-[60px] cursor-pointer group"
           >
             <div className={`w-10 h-10 rounded-full flex items-center justify-center mb-1 transition duration-300 ${activeSport === sport.value ? 'bg-primary' : 'bg-gray-200 dark:bg-white/10 group-hover:bg-primary'}`}>
-              <span className="material-symbols-outlined text-gray-600 dark:text-gray-300 group-hover:text-white text-xl">
+              <span className={`material-symbols-outlined text-xl transition ${activeSport === sport.value ? 'text-white' : 'text-gray-600 dark:text-gray-300 group-hover:text-white'}`}>
                 {sport.icon}
               </span>
             </div>

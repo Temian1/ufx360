@@ -3,6 +3,8 @@ export interface LiveMatch {
   time: string;
   team1: string;
   team2: string;
+  score1?: number;
+  score2?: number;
   odds1: string;
   oddsX: string;
   odds2: string;
@@ -97,6 +99,12 @@ export interface PromoOffer {
   description: string;
   tag: string;
   claimed: boolean;
+}
+
+export interface ResponsibleGamingSettings {
+  dailyStakeLimit: number;
+  dailyLossLimit: number;
+  sessionReminderMinutes: number;
 }
 
 export interface Notification {

@@ -34,14 +34,14 @@ const OddsButton: React.FC<{
         }
     }, [odds, prevOdds]);
 
-    if (odds === '-') return <div className="w-14 h-10"></div>;
+    if (odds === '-') return <div className="w-12 h-10"></div>;
 
     return (
         <button 
-            className={`flex flex-col items-center justify-center w-14 h-11 rounded-lg text-xs font-bold transition-all duration-300 shadow-sm border border-transparent ${
+            className={`flex flex-col items-center justify-center w-12 h-10 rounded-lg text-xs font-bold transition-all duration-300 border ${
                 flashClass 
                 ? flashClass 
-                : 'bg-gray-50 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 text-gray-800 dark:text-gray-200 border-gray-100 dark:border-white/5 hover:border-primary dark:hover:border-bet-yellow'
+                : 'bg-gray-50 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 text-gray-800 dark:text-gray-200 border-gray-200 dark:border-white/10 hover:border-primary dark:hover:border-bet-yellow'
             } active:scale-95`}
             onClick={onClick}
         >
@@ -53,14 +53,15 @@ const OddsButton: React.FC<{
 
 const LiveMatches: React.FC<LiveMatchesProps> = ({ matches, onMatchesUpdate, onMatchSelect, onAddBet, searchTerm, sportFilter = 'All' }) => {
   const { t } = useTranslation();
+  const formatScore = (score?: number) => (typeof score === 'number' ? score.toString() : '-');
 
   // Filter matches
   const filteredMatches = matches.filter(m => {
-    const matchesSport = sportFilter === 'All' ? true : m.sport === sportFilter;
-    if (!searchTerm) return true;
+    const matchesSport = sportFilter === 'All' || m.sport === sportFilter;
+    if (!searchTerm) return matchesSport;
     const term = searchTerm.toLowerCase();
     return matchesSport && (m.team1.toLowerCase().includes(term) || m.team2.toLowerCase().includes(term) || m.sport.toLowerCase().includes(term));
-  }).filter((m) => (sportFilter === 'All' ? true : m.sport === sportFilter));
+  });
 
   // Simulate Odds Changes
   useEffect(() => {
@@ -109,52 +110,52 @@ const LiveMatches: React.FC<LiveMatchesProps> = ({ matches, onMatchesUpdate, onM
       ) : (
           <div className="space-y-4">
               {filteredMatches.map((match) => (
-                <div 
-                    key={match.id} 
-                    className="group bg-white dark:bg-surface-dark rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 dark:border-white/5"
+                <div
+                    key={match.id}
+                    className="group bg-white dark:bg-surface-dark rounded-xl overflow-hidden transition-all duration-300 border border-gray-200 dark:border-white/10"
                 >
                     {/* Header */}
-                    <div className="bg-gray-50 dark:bg-black/20 px-4 py-2 flex justify-between items-center border-b border-gray-100 dark:border-white/5">
+                    <div className="bg-gray-50 dark:bg-black/20 px-3 py-1.5 flex justify-between items-center border-b border-gray-200 dark:border-white/10">
                         <div className="flex items-center gap-2">
-                            <span className="material-symbols-outlined text-sm text-gray-400">sports_soccer</span>
-                            <span className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{match.sport}</span>
+                            <span className="material-symbols-outlined text-sm text-gray-500 dark:text-gray-400">sports_soccer</span>
+                            <span className="text-[11px] font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider">{match.sport}</span>
                         </div>
-                        <div className="flex items-center gap-1.5 text-red-500 font-bold text-xs bg-red-50 dark:bg-red-500/10 px-2 py-0.5 rounded-full border border-red-100 dark:border-red-500/20">
+                        <div className="flex items-center gap-1.5 text-red-600 dark:text-red-400 font-bold text-[11px] bg-red-50 dark:bg-red-500/10 px-2 py-0.5 rounded-full border border-red-200 dark:border-red-500/20">
                             <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></span>
                             <span className="tabular-nums">{match.time}</span>
                         </div>
                     </div>
 
-                    <div 
-                        className="p-4 cursor-pointer relative"
+                    <div
+                        className="p-3 cursor-pointer relative"
                         onClick={() => onMatchSelect(match)}
                     >
-                        <div className="flex justify-between items-center mb-4">
-                            <div className="flex-1 space-y-3">
-                                <div className="flex justify-between items-center">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-xs font-bold text-gray-600 dark:text-gray-300 shadow-inner">
+                        <div className="flex items-start gap-3">
+                            <div className="flex-1 space-y-2.5 min-w-0">
+                                <div className="flex items-center justify-between gap-3">
+                                    <div className="flex items-center gap-2.5 min-w-0">
+                                        <div className="w-7 h-7 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-[11px] font-bold text-gray-700 dark:text-gray-200 shadow-inner">
                                             {match.team1.charAt(0)}
                                         </div>
-                                        <span className="font-bold text-gray-800 dark:text-gray-200 text-sm">{match.team1}</span>
+                                        <span className="font-bold text-gray-900 dark:text-gray-100 text-sm truncate">{match.team1}</span>
                                     </div>
-                                    <span className="font-black text-lg text-gray-800 dark:text-white tabular-nums">1</span>
+                                    <span className="inline-flex w-10 h-7 items-center justify-center rounded-md bg-gray-100 dark:bg-black/30 text-gray-900 dark:text-white font-black text-base leading-none tabular-nums shrink-0">
+                                        {formatScore(match.score1)}
+                                    </span>
                                 </div>
-                                <div className="flex justify-between items-center">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-xs font-bold text-gray-600 dark:text-gray-300 shadow-inner">
+                                <div className="flex items-center justify-between gap-3">
+                                    <div className="flex items-center gap-2.5 min-w-0">
+                                        <div className="w-7 h-7 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-[11px] font-bold text-gray-700 dark:text-gray-200 shadow-inner">
                                             {match.team2.charAt(0)}
                                         </div>
-                                        <span className="font-bold text-gray-800 dark:text-gray-200 text-sm">{match.team2}</span>
+                                        <span className="font-bold text-gray-900 dark:text-gray-100 text-sm truncate">{match.team2}</span>
                                     </div>
-                                    <span className="font-black text-lg text-gray-800 dark:text-white tabular-nums">0</span>
+                                    <span className="inline-flex w-10 h-7 items-center justify-center rounded-md bg-gray-100 dark:bg-black/30 text-gray-900 dark:text-white font-black text-base leading-none tabular-nums shrink-0">
+                                        {formatScore(match.score2)}
+                                    </span>
                                 </div>
                             </div>
-                            
-                            {/* Visual Divider or Stats could go here */}
-                            <div className="mx-4 h-12 w-px bg-gray-100 dark:bg-white/10 hidden sm:block"></div>
-
-                             <div className="flex gap-2">
+                            <div className="flex gap-1.5 shrink-0">
                                 <OddsButton 
                                     label="1" 
                                     odds={match.odds1} 
@@ -173,13 +174,13 @@ const LiveMatches: React.FC<LiveMatchesProps> = ({ matches, onMatchesUpdate, onM
                             </div>
                         </div>
 
-                        <div className="flex items-center justify-between text-xs text-gray-400 border-t border-gray-100 dark:border-white/5 pt-3 mt-1">
+                        <div className="flex items-center justify-between text-[11px] text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-white/10 pt-2 mt-2">
                             <div className="flex gap-3">
-                                <span className="flex items-center gap-1 hover:text-primary transition-colors">
+                                <span className="flex items-center gap-1 hover:text-primary dark:hover:text-bet-yellow transition-colors">
                                     <span className="material-symbols-outlined text-[16px]">bar_chart</span>
                                     {t('live.stats')}
                                 </span>
-                                <span className="flex items-center gap-1 hover:text-primary transition-colors">
+                                <span className="flex items-center gap-1 hover:text-primary dark:hover:text-bet-yellow transition-colors">
                                     <span className="material-symbols-outlined text-[16px]">videocam</span>
                                     {t('live.stream')}
                                 </span>

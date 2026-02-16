@@ -12,6 +12,7 @@ import BetSlip from './components/BetSlip';
 import AuthModal from './components/AuthModal';
 import BetHistory from './components/BetHistory';
 import AgentDashboard from './components/AgentDashboard';
+import AdminDashboard from './components/AdminDashboard';
 import AllSportsView from './components/AllSportsView';
 import InPlayView from './components/InPlayView';
 import WalletView from './components/WalletView';
@@ -20,7 +21,7 @@ import AccountView from './components/AccountView';
 import QuickActionsBar from './components/QuickActionsBar';
 import FeaturedView from './components/FeaturedView';
 import HomeExtraLists from './components/HomeExtraLists';
-import SearchResultsPanel from './components/SearchResultsPanel';
+import SearchModal from './components/SearchResultsPanel';
 import NotificationsPanel from './components/NotificationsPanel';
 import Footer from './components/Footer';
 import LegalPages from './components/LegalPages';
@@ -63,6 +64,7 @@ const App: React.FC = () => {
   
   const [showLegal, setShowLegal] = useState(false);
   const [legalPage, setLegalPage] = useState<'terms' | 'privacy' | 'responsible-gaming' | 'rules'>('terms');
+  const [showSearchModal, setShowSearchModal] = useState(false);
 
   useEffect(() => {
     const savedUser = localStorage.getItem('currentUser');
@@ -517,7 +519,7 @@ const App: React.FC = () => {
           />
         ) : (
           <>
-            <SubHeader searchTerm={searchTerm} onSearch={setSearchTerm} onSportSelect={handleSportSelect} activeSport={selectedSport} />
+            <SubHeader onSearchOpen={() => setShowSearchModal(true)} onSportSelect={handleSportSelect} activeSport={selectedSport} />
             <div className="p-3 space-y-4">
               <Hero onNavigate={handleHeroNavigate} />
 
@@ -531,13 +533,6 @@ const App: React.FC = () => {
 
               <FeaturedMatches onViewAll={() => setCurrentView('featured')} onOpenMoreLegs={() => setCurrentView('featured')} />
 
-              <SearchResultsPanel
-                term={searchTerm}
-                loading={searchLoading}
-                results={searchResults}
-                onMatchSelect={navigateToMatch}
-                onClear={() => setSearchTerm('')}
-              />
 
               <HomeExtraLists matches={matches} onMatchSelect={navigateToMatch} />
 
@@ -572,6 +567,15 @@ const App: React.FC = () => {
 
       {showAuthModal && <AuthModal onLogin={handleLogin} onRegister={handleRegister} onClose={() => setShowAuthModal(false)} />}
       {showLegal && <LegalPages initialPage={legalPage} onClose={() => setShowLegal(false)} />}
+      <SearchModal
+        isOpen={showSearchModal}
+        term={searchTerm}
+        loading={searchLoading}
+        results={searchResults}
+        onSearch={setSearchTerm}
+        onMatchSelect={(match) => { navigateToMatch(match); setShowSearchModal(false); setSearchTerm(''); }}
+        onClose={() => { setShowSearchModal(false); setSearchTerm(''); }}
+      />
     </div>
   );
 };

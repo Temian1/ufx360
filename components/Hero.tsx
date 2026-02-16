@@ -51,26 +51,26 @@ const Hero: React.FC<HeroProps> = ({ onNavigate }) => {
     <div className="space-y-4">
       <button
         onClick={() => onNavigate(activeSlide.target)}
-        className="relative rounded-2xl overflow-hidden h-52 sm:h-64 flex items-center shadow-2xl w-full text-left group transition-all duration-500 hover:scale-[1.01]"
+        className="relative rounded-2xl overflow-hidden h-40 sm:h-48 flex items-center shadow-md w-full text-left group transition-all duration-500 hover:scale-[1.01]"
       >
         <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" style={{ backgroundImage: `url('${activeSlide.bgImage}')` }}></div>
         <div className="absolute inset-0 bg-gradient-to-r from-black via-black/60 to-transparent"></div>
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
 
-        <div className="relative z-10 p-6 sm:p-10 w-3/4 sm:w-1/2 flex flex-col justify-center h-full">
-          <p className="text-xs sm:text-sm font-bold text-bet-yellow uppercase mb-2 tracking-widest animate-in slide-in-from-left-4 fade-in duration-500 delay-100 flex items-center gap-2">
-            <span className="w-8 h-[2px] bg-bet-yellow inline-block"></span>
+        <div className="relative z-10 p-4 sm:p-8 w-3/4 sm:w-1/2 flex flex-col justify-center h-full">
+          <p className="text-[10px] sm:text-xs font-bold text-bet-yellow uppercase mb-1.5 tracking-widest animate-in slide-in-from-left-4 fade-in duration-500 delay-100 flex items-center gap-2">
+            <span className="w-6 h-[2px] bg-bet-yellow inline-block"></span>
             {activeSlide.kicker}
           </p>
-          <h1 className="text-3xl sm:text-5xl font-black text-white italic leading-none mb-4 animate-in slide-in-from-left-4 fade-in duration-500 delay-200 drop-shadow-lg">
+          <h1 className="text-2xl sm:text-4xl font-black text-white italic leading-none mb-3 animate-in slide-in-from-left-4 fade-in duration-500 delay-200 drop-shadow-lg">
             {activeSlide.title} <br/>
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-bet-yellow to-yellow-200">{activeSlide.highlight}</span> <br/>
             {activeSlide.tail}
           </h1>
           <div className="animate-in slide-in-from-bottom-4 fade-in duration-500 delay-300">
-            <span className="inline-flex items-center gap-2 bg-bet-yellow text-gray-900 font-black px-8 py-3 rounded-full text-sm hover:bg-white hover:text-black transition-all transform hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(255,223,27,0.3)]">
+            <span className="inline-flex items-center gap-2 bg-bet-yellow text-gray-900 font-black px-6 py-2 rounded-full text-xs hover:bg-white hover:text-black transition-all transform hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(255,223,27,0.3)]">
                 {activeSlide.cta}
-                <span className="material-symbols-outlined text-lg">arrow_forward</span>
+                <span className="material-symbols-outlined text-base">arrow_forward</span>
             </span>
           </div>
         </div>

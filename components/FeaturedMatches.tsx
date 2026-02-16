@@ -26,7 +26,7 @@ const FeaturedMatches: React.FC<FeaturedMatchesProps> = ({ onViewAll, onOpenMore
 
       <div className="flex overflow-x-auto gap-4 no-scrollbar pb-4">
         {/* Card 1: Acca Boost */}
-        <div className="min-w-[300px] bg-white dark:bg-[#1a1a1a] rounded-2xl overflow-hidden shadow-lg border border-gray-100 dark:border-white/5 flex flex-col group hover:shadow-xl transition-all duration-300">
+        <div className="min-w-[300px] bg-white dark:bg-[#1a1a1a] rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-white/5 flex flex-col group hover:shadow-md transition-all duration-300">
           <div className="bg-gradient-to-r from-green-600 to-green-700 p-3 flex justify-between items-center text-white relative overflow-hidden">
              <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10"></div>
             <div className="flex items-center gap-2 relative z-10">
@@ -65,7 +65,7 @@ const FeaturedMatches: React.FC<FeaturedMatchesProps> = ({ onViewAll, onOpenMore
         </div>
 
         {/* Card 2: Bet Boost */}
-        <div className="min-w-[300px] bg-white dark:bg-[#1a1a1a] rounded-2xl overflow-hidden shadow-lg border border-gray-100 dark:border-white/5 flex flex-col group hover:shadow-xl transition-all duration-300">
+        <div className="min-w-[300px] bg-white dark:bg-[#1a1a1a] rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-white/5 flex flex-col group hover:shadow-md transition-all duration-300">
           <div className="bg-gradient-to-r from-primary to-blue-700 p-3 flex justify-between items-center text-white relative overflow-hidden">
             <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10"></div>
             <div className="flex items-center gap-2 relative z-10">
@@ -108,7 +108,7 @@ const FeaturedMatches: React.FC<FeaturedMatchesProps> = ({ onViewAll, onOpenMore
         </div>
 
         {/* Card 3: Bet Boost */}
-        <div className="min-w-[300px] bg-white dark:bg-[#1a1a1a] rounded-2xl overflow-hidden shadow-lg border border-gray-100 dark:border-white/5 flex flex-col group hover:shadow-xl transition-all duration-300">
+        <div className="min-w-[300px] bg-white dark:bg-[#1a1a1a] rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-white/5 flex flex-col group hover:shadow-md transition-all duration-300">
            <div className="bg-gradient-to-r from-primary to-blue-700 p-3 flex justify-between items-center text-white relative overflow-hidden">
             <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10"></div>
             <div className="flex items-center gap-2 relative z-10">
