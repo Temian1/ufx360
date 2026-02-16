@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { User, UserRole, PlacedBet } from '../types';
+import { User, UserRole, PlacedBet, WalletTransaction, WithdrawalRequest } from '../types';
 
 interface AgentDashboardProps {
   currentUser: User;
   allUsers: User[];
   allBets: PlacedBet[];
+  withdrawalRequests: WithdrawalRequest[];
   onCreateUser: (user: Omit<User, 'id'>) => void;
   onUpdateBalance: (userId: string, amount: number) => void;
+  onUpdateUser: (userId: string, updates: Partial<User>) => void;
+  walletTransactions: WalletTransaction[];
+  onProcessWithdrawalCode: (code: string) => { ok: boolean; message: string };
   onToggleBlock: (userId: string) => void;
   onSettleBet: (betId: string, result: 'Won' | 'Lost') => void;
   onUpdateProfile: (updates: Partial<User>) => void;
@@ -19,16 +23,22 @@ const AgentDashboard: React.FC<AgentDashboardProps> = ({
   currentUser,
   allUsers,
   allBets,
+  withdrawalRequests,
   onCreateUser,
   onUpdateBalance,
+  onUpdateUser,
+  walletTransactions,
+  onProcessWithdrawalCode,
   onToggleBlock,
   onSettleBet,
   onUpdateProfile,
   onLogout
 }) => {
-  const [activeTab, setActiveTab] = useState<'downline' | 'bets' | 'create' | 'commission' | 'profile'>('downline');
+  const [activeTab, setActiveTab] = useState<'downline' | 'bets' | 'create' | 'commission' | 'profile' | 'risk' | 'logs' | 'withdraw'>('downline');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [depositAmounts, setDepositAmounts] = useState<Record<string, string>>({});
+  const [withdrawCode, setWithdrawCode] = useState('');
+  const [withdrawMessage, setWithdrawMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   const [newUserUsername, setNewUserUsername] = useState('');
   const [newUserPassword, setNewUserPassword] = useState('');
@@ -57,6 +67,12 @@ const AgentDashboard: React.FC<AgentDashboardProps> = ({
   const downlineBets = allBets.filter(b => downlineUserIds.includes(b.userId));
   const totalTurnover = downlineBets.reduce((sum, b) => sum + parseFloat(b.stake), 0);
   const totalCommission = totalTurnover * 0.05;
+  const pendingWithdrawalRequests = withdrawalRequests.filter(
+    (req) => req.status === 'Pending' && downlineUserIds.includes(req.userId),
+  );
+  const matchedWithdrawal = pendingWithdrawalRequests.find(
+    (req) => req.claimCode === withdrawCode.trim().toUpperCase(),
+  );
 
   const getNextRole = (role: UserRole): UserRole | null => {
     const idx = ROLES.indexOf(role);
@@ -90,12 +106,16 @@ const AgentDashboard: React.FC<AgentDashboardProps> = ({
   const switchTab = (tab: typeof activeTab) => {
     setActiveTab(tab);
     setMobileMenuOpen(false);
+    setWithdrawMessage(null);
   };
 
   const tabs = [
     { id: 'downline' as const, icon: 'group', label: 'Downline' },
     { id: 'create' as const, icon: 'person_add', label: 'Register User' },
     { id: 'commission' as const, icon: 'percent', label: 'Commission' },
+    { id: 'risk' as const, icon: 'policy', label: 'Risk Limits' },
+    { id: 'withdraw' as const, icon: 'pin', label: 'Withdraw Codes' },
+    { id: 'logs' as const, icon: 'history', label: 'Tx Logs' },
     { id: 'bets' as const, icon: 'gavel', label: 'Risk & Bets' },
     { id: 'profile' as const, icon: 'badge', label: 'Profile' },
   ];
@@ -476,6 +496,184 @@ const AgentDashboard: React.FC<AgentDashboardProps> = ({
                     </div>
                   );
                 })}
+              </div>
+            </div>
+          )}
+
+          {/* ===== RISK TAB ===== */}
+          {activeTab === 'risk' && (
+            <div className="space-y-3">
+              <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-xl text-xs text-blue-800 dark:text-blue-200 flex items-center gap-2">
+                <span className="material-symbols-outlined text-sm">shield</span>
+                Configure commission, max bet, credit and exposure limits for each downline user.
+              </div>
+              <div className="bg-white dark:bg-surface-dark rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm text-left">
+                    <thead className="bg-gray-50 dark:bg-black/20 text-gray-500 dark:text-gray-400 font-bold uppercase text-xs">
+                      <tr>
+                        <th className="p-4">User</th>
+                        <th className="p-4">Commission %</th>
+                        <th className="p-4">Max Bet</th>
+                        <th className="p-4">Credit Limit</th>
+                        <th className="p-4">Exposure Limit</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                      {directDownline.map(user => (
+                        <tr key={user.id} className="hover:bg-gray-50 dark:hover:bg-white/5">
+                          <td className="p-4 font-bold text-gray-900 dark:text-white">{user.username}</td>
+                          <td className="p-4">
+                            <input
+                              type="number"
+                              min={0}
+                              max={100}
+                              value={user.commission}
+                              onChange={(e) => onUpdateUser(user.id, { commission: parseFloat(e.target.value || '0') })}
+                              className="w-24 text-xs p-2 rounded border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-black/20"
+                            />
+                          </td>
+                          <td className="p-4">
+                            <input
+                              type="number"
+                              min={0}
+                              value={user.maxBetLimit}
+                              onChange={(e) => onUpdateUser(user.id, { maxBetLimit: parseFloat(e.target.value || '0') })}
+                              className="w-24 text-xs p-2 rounded border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-black/20"
+                            />
+                          </td>
+                          <td className="p-4">
+                            <input
+                              type="number"
+                              min={0}
+                              value={user.creditLimit}
+                              onChange={(e) => onUpdateUser(user.id, { creditLimit: parseFloat(e.target.value || '0') })}
+                              className="w-28 text-xs p-2 rounded border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-black/20"
+                            />
+                          </td>
+                          <td className="p-4">
+                            <input
+                              type="number"
+                              min={0}
+                              value={user.exposureLimit || user.creditLimit}
+                              onChange={(e) => onUpdateUser(user.id, { exposureLimit: parseFloat(e.target.value || '0') })}
+                              className="w-28 text-xs p-2 rounded border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-black/20"
+                            />
+                          </td>
+                        </tr>
+                      ))}
+                      {directDownline.length === 0 && (
+                        <tr><td colSpan={5} className="p-8 text-center text-gray-500">No downline users found.</td></tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ===== LOGS TAB ===== */}
+          {activeTab === 'logs' && (
+            <div className="space-y-3">
+              <div className="bg-white dark:bg-surface-dark rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700">
+                <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+                  <h3 className="font-bold text-gray-800 dark:text-white">Agent Transaction Logs</h3>
+                </div>
+                <div className="divide-y divide-gray-200 dark:divide-gray-700">
+                  {walletTransactions
+                    .filter((tx) => tx.actorId === currentUser.id || tx.userId === currentUser.id)
+                    .slice(0, 100)
+                    .map((tx) => (
+                      <div key={tx.id} className="p-3 text-xs flex items-center justify-between gap-3">
+                        <div>
+                          <div className="font-bold text-gray-800 dark:text-gray-200">{tx.type} {tx.status ? `(${tx.status})` : ''}</div>
+                          <div className="text-gray-500">{new Date(tx.date).toLocaleString()} | {tx.note}</div>
+                        </div>
+                        <div className={`font-mono font-bold ${tx.amount >= 0 ? 'text-green-600' : 'text-red-500'}`}>
+                          {tx.amount >= 0 ? '+' : ''}${Math.abs(tx.amount).toFixed(2)}
+                        </div>
+                      </div>
+                    ))}
+                  {walletTransactions.filter((tx) => tx.actorId === currentUser.id || tx.userId === currentUser.id).length === 0 && (
+                    <div className="p-8 text-center text-gray-500">No logs yet.</div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ===== WITHDRAW CODE TAB ===== */}
+          {activeTab === 'withdraw' && (
+            <div className="space-y-4">
+              <div className="bg-orange-50 dark:bg-orange-900/20 p-3 rounded-xl text-xs text-orange-800 dark:text-orange-200 flex items-center gap-2">
+                <span className="material-symbols-outlined text-sm">pin</span>
+                Users send you a withdrawal code. Enter the code, verify amount, then process payout.
+              </div>
+
+              <div className="bg-white dark:bg-surface-dark rounded-xl border border-gray-200 dark:border-gray-700 p-4 sm:p-5 space-y-4">
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <input
+                    type="text"
+                    value={withdrawCode}
+                    onChange={(e) => setWithdrawCode(e.target.value.toUpperCase())}
+                    placeholder="Enter withdraw code"
+                    className="flex-1 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-black/20 px-3 py-2 text-sm font-mono tracking-widest"
+                  />
+                  <button
+                    onClick={() => {
+                      const result = onProcessWithdrawalCode(withdrawCode);
+                      setWithdrawMessage({ type: result.ok ? 'success' : 'error', text: result.message });
+                      if (result.ok) setWithdrawCode('');
+                    }}
+                    className="px-4 py-2 rounded-lg bg-primary text-white text-sm font-bold hover:bg-primary/90"
+                  >
+                    Process Withdraw
+                  </button>
+                </div>
+
+                {matchedWithdrawal && (
+                  <div className="rounded-lg border border-orange-200 dark:border-orange-500/30 bg-orange-50 dark:bg-orange-500/10 p-3 text-sm">
+                    <div className="font-bold text-gray-900 dark:text-white">{matchedWithdrawal.username}</div>
+                    <div className="text-gray-700 dark:text-gray-300">Amount: ${matchedWithdrawal.amount.toFixed(2)}</div>
+                    <div className="text-gray-500 text-xs mt-1">
+                      Requested: {new Date(matchedWithdrawal.requestedAt).toLocaleString()}
+                    </div>
+                  </div>
+                )}
+
+                {withdrawMessage && (
+                  <div
+                    className={`rounded-lg p-3 text-sm font-medium ${
+                      withdrawMessage.type === 'success'
+                        ? 'bg-green-50 text-green-700 dark:bg-green-900/20 dark:text-green-300'
+                        : 'bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-300'
+                    }`}
+                  >
+                    {withdrawMessage.text}
+                  </div>
+                )}
+              </div>
+
+              <div className="bg-white dark:bg-surface-dark rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700">
+                <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+                  <h3 className="font-bold text-gray-800 dark:text-white">Pending Downline Withdrawals</h3>
+                </div>
+                <div className="divide-y divide-gray-200 dark:divide-gray-700">
+                  {pendingWithdrawalRequests.slice(0, 30).map((req) => (
+                    <div key={req.id} className="p-3 text-sm flex items-center justify-between gap-3">
+                      <div>
+                        <div className="font-bold text-gray-800 dark:text-gray-200">{req.username}</div>
+                        <div className="text-xs text-gray-500">
+                          Code: <span className="font-mono tracking-wider">{req.claimCode}</span> | {new Date(req.requestedAt).toLocaleString()}
+                        </div>
+                      </div>
+                      <div className="font-mono font-bold text-orange-600 dark:text-orange-300">${req.amount.toFixed(2)}</div>
+                    </div>
+                  ))}
+                  {pendingWithdrawalRequests.length === 0 && (
+                    <div className="p-8 text-center text-gray-500 text-sm">No pending withdrawal codes in your downline.</div>
+                  )}
+                </div>
               </div>
             </div>
           )}

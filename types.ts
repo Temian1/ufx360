@@ -69,6 +69,7 @@ export interface User {
   balance: number; // Current funds allocated
   exposure: number; // Funds currently locked in open bets
   creditLimit: number; // Max credit allowed
+  exposureLimit?: number; // Max exposure allowed
   commission: number; // Percentage
   maxBetLimit: number;
   isBlocked: boolean;
@@ -82,16 +83,58 @@ export interface PlacedBet {
   stake: string;
   totalOdds: string;
   potentialReturn: string;
-  status: 'Open' | 'Won' | 'Lost' | 'Cashed Out';
+  status: 'Open' | 'Won' | 'Lost' | 'Cashed Out' | 'Voided';
   date: string;
 }
 
 export interface WalletTransaction {
   id: string;
+  userId?: string;
+  actorId?: string;
+  withdrawalRequestId?: string;
   type: 'Deposit' | 'Withdraw' | 'Bet Placed' | 'Settlement' | 'Cash Out';
+  method?: 'Stripe' | 'PayPal' | 'Crypto' | 'Agent';
   amount: number;
   date: string;
   note: string;
+  status?: 'Completed' | 'Pending' | 'Rejected';
+}
+
+export interface WithdrawalRequest {
+  id: string;
+  userId: string;
+  username: string;
+  claimCode: string;
+  amount: number;
+  method: 'Crypto';
+  network: string;
+  walletAddress: string;
+  status: 'Pending' | 'Approved' | 'Rejected';
+  requestedAt: string;
+  reviewedAt?: string;
+  reviewedBy?: string;
+  adminNote?: string;
+  processedByAgentId?: string;
+  processedAt?: string;
+}
+
+export interface PaymentGateway {
+  id: string;
+  name: string;
+  type: 'Local' | 'Crypto' | 'Card' | 'Wallet';
+  enabled: boolean;
+  feePercent: number;
+  minAmount: number;
+  maxAmount: number;
+}
+
+export interface ApiKeyConfig {
+  id: string;
+  provider: string;
+  key: string;
+  secret?: string;
+  enabled: boolean;
+  updatedAt: string;
 }
 
 export interface PromoOffer {

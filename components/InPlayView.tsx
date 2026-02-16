@@ -9,25 +9,15 @@ interface InPlayViewProps {
 
 const sportsList = [
   { name: 'All', icon: 'apps', value: 'All' },
-  { name: 'Soccer', icon: 'sports_soccer', value: 'Soccer' },
+  { name: 'Football', icon: 'sports_soccer', value: 'Soccer' },
   { name: 'Tennis', icon: 'sports_tennis', value: 'Tennis' },
-  { name: 'Basket', icon: 'sports_basketball', value: 'Basketball' },
   { name: 'Cricket', icon: 'sports_cricket', value: 'Cricket' },
-  { name: 'NFL', icon: 'sports_football', value: 'American Football' },
-  { name: 'Esports', icon: 'sports_esports', value: 'Esports' },
-  { name: 'Baseball', icon: 'sports_baseball', value: 'Baseball' },
-  { name: 'Hockey', icon: 'sports_hockey', value: 'Hockey' },
 ];
 
 const sportIcons: Record<string, string> = {
   Soccer: 'sports_soccer',
   Tennis: 'sports_tennis',
-  Basketball: 'sports_basketball',
   Cricket: 'sports_cricket',
-  'American Football': 'sports_football',
-  Esports: 'sports_esports',
-  Baseball: 'sports_baseball',
-  Hockey: 'sports_hockey',
 };
 
 const InPlayView: React.FC<InPlayViewProps> = ({ matches, onMatchSelect, onAddBet }) => {

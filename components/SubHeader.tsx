@@ -11,9 +11,12 @@ interface SubHeaderProps {
 
 const mobileCategories = [
   { name: 'Home', icon: 'home', value: 'home' },
-  { name: 'Sports', icon: 'sports_soccer', value: 'sports' },
+  { name: 'Football', icon: 'sports_soccer', value: 'football' },
+  { name: 'Cricket', icon: 'sports_cricket', value: 'cricket' },
+  { name: 'Tennis', icon: 'sports_tennis', value: 'tennis' },
+  { name: 'In-Play', icon: 'sensors', value: 'in-play' },
   { name: 'Casino', icon: 'casino', value: 'casino' },
-  { name: 'Slot', icon: 'sports_esports', value: 'slot' },
+  { name: 'Slots', icon: 'attractions', value: 'slot' },
   { name: 'Table', icon: 'table_restaurant', value: 'table' },
   { name: 'Fishing', icon: 'phishing', value: 'fishing' },
   { name: 'Lottery', icon: 'confirmation_number', value: 'lottery' },
@@ -25,8 +28,9 @@ const desktopTabs = [
   { name: 'In-Play', value: 'in-play', badge: 6 },
   { name: 'Multi Markets', value: 'multi', badge: 1 },
   { name: 'Cricket', value: 'cricket', badge: 9 },
-  { name: 'Soccer', value: 'soccer', badge: 0 },
+  { name: 'Football', value: 'football', badge: 0 },
   { name: 'Tennis', value: 'tennis', badge: 0 },
+  { name: 'Casino', value: 'casino', badge: 0 },
 ];
 
 const SubHeader: React.FC<SubHeaderProps> = ({ activeCategory = 'home', onCategorySelect, liveCounts }) => {
@@ -35,7 +39,7 @@ const SubHeader: React.FC<SubHeaderProps> = ({ activeCategory = 'home', onCatego
   // Merge live counts into desktop tab badges
   const tabsWithCounts = desktopTabs.map((tab) => {
     if (tab.value === 'cricket' && liveCounts?.Cricket) return { ...tab, badge: liveCounts.Cricket };
-    if (tab.value === 'soccer' && liveCounts?.Soccer) return { ...tab, badge: liveCounts.Soccer };
+    if (tab.value === 'football' && liveCounts?.Soccer) return { ...tab, badge: liveCounts.Soccer };
     if (tab.value === 'tennis' && liveCounts?.Tennis) return { ...tab, badge: liveCounts.Tennis };
     if (tab.value === 'in-play') {
       const total = liveCounts ? (Object.values(liveCounts) as number[]).reduce((a, b) => a + b, 0) : 6;

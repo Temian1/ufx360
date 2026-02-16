@@ -6,10 +6,9 @@ interface SportsTabsProps {
 }
 
 const tabs = [
-  { label: 'Soccer', sport: 'Soccer' },
-  { label: 'ATP/WTA', sport: 'Tennis' },
-  { label: 'NBA', sport: 'Basketball' },
-  { label: 'NFL', sport: 'American Football' },
+  { label: 'Football', sport: 'Soccer' },
+  { label: 'Cricket', sport: 'Cricket' },
+  { label: 'Tennis', sport: 'Tennis' },
 ];
 
 const SportsTabs: React.FC<SportsTabsProps> = ({ activeTab, onTabChange }) => {

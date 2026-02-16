@@ -81,6 +81,16 @@ body {
   border-radius: 8px;
 }
 
+/* Slow ping for casino coming soon */
+@keyframes ping-slow {
+  0% { transform: scale(1); opacity: 0.5; }
+  75%, 100% { transform: scale(1.8); opacity: 0; }
+}
+
+.animate-ping-slow {
+  animation: ping-slow 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
 .skeleton-light {
   background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%);
   background-size: 800px 100%;

@@ -5,6 +5,7 @@ import { useTranslation } from '../contexts/TranslationContext';
 interface AuthModalProps {
   onLogin: (username: string) => boolean;
   onRegister: (user: Partial<User>) => void;
+  allowRegistration?: boolean;
   onClose: () => void;
 }
 
@@ -92,7 +93,7 @@ const iconMap: Record<string, React.FC> = {
   lock_reset: ShieldIcon,
 };
 
-const AuthModal: React.FC<AuthModalProps> = ({ onLogin, onRegister, onClose }) => {
+const AuthModal: React.FC<AuthModalProps> = ({ onLogin, onRegister, allowRegistration = true, onClose }) => {
   const { t } = useTranslation();
   const [step, setStep] = useState<AuthStep>('LOGIN');
   const [formData, setFormData] = useState({
@@ -361,12 +362,18 @@ const AuthModal: React.FC<AuthModalProps> = ({ onLogin, onRegister, onClose }) =
 
               {renderSubmitButton(t('login'))}
 
-              <p className="mt-4 text-center text-[11px] text-gray-500 dark:text-gray-400">
-                {t('auth.no_account')}{' '}
-                <button type="button" onClick={() => setStep('REGISTER_DETAILS')} className="text-primary dark:text-bet-yellow font-bold hover:underline">
-                  {t('register')}
-                </button>
-              </p>
+              {allowRegistration ? (
+                <p className="mt-4 text-center text-[11px] text-gray-500 dark:text-gray-400">
+                  {t('auth.no_account')}{' '}
+                  <button type="button" onClick={() => setStep('REGISTER_DETAILS')} className="text-primary dark:text-bet-yellow font-bold hover:underline">
+                    {t('register')}
+                  </button>
+                </p>
+              ) : (
+                <p className="mt-4 text-center text-[11px] text-gray-500 dark:text-gray-400">
+                  Player registration is agent-only. Contact your agent to create an account.
+                </p>
+              )}
             </form>
           )}
 

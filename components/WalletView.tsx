@@ -1,10 +1,11 @@
 import React, { useState, useMemo } from 'react';
 import { useTranslation } from '../contexts/TranslationContext';
-import { User, WalletTransaction } from '../types';
+import { User, WalletTransaction, WithdrawalRequest } from '../types';
 
 interface WalletViewProps {
   user: User | null;
   agentProfile?: User | null;
+  pendingWithdrawal?: WithdrawalRequest | null;
   transactions: WalletTransaction[];
   onDeposit: (amount: number, method: 'Stripe' | 'PayPal' | 'Crypto') => void;
   onWithdraw: (amount: number, method: 'Stripe' | 'PayPal' | 'Crypto') => void;
@@ -107,10 +108,10 @@ const tabConfig: { key: Tab; icon: React.FC; label: string }[] = [
   { key: 'transactions', icon: ReceiptIcon, label: 'History' },
 ];
 
-const WalletView: React.FC<WalletViewProps> = ({ user, agentProfile, transactions, onDeposit, onWithdraw, onGoAccount, onGoPromos }) => {
+const WalletView: React.FC<WalletViewProps> = ({ user, agentProfile, pendingWithdrawal, transactions, onDeposit, onWithdraw, onGoAccount, onGoPromos }) => {
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<Tab>('overview');
-  const [method, setMethod] = useState<Method>('Stripe');
+  const [method, setMethod] = useState<Method>('Crypto');
   const [amount, setAmount] = useState('50');
   const [network, setNetwork] = useState('USDT-TRC20');
 
@@ -172,7 +173,7 @@ const WalletView: React.FC<WalletViewProps> = ({ user, agentProfile, transaction
       onWithdraw(parsed, method);
     }
     setAmount('');
-    alert(type === 'deposit' ? t('wallet.deposit_success') : t('wallet.withdraw_success'));
+    alert('Withdrawal code generated. Share the code with your assigned agent to get paid.');
   };
 
   const methodIcons: Record<Method, React.FC> = {
@@ -291,6 +292,16 @@ const WalletView: React.FC<WalletViewProps> = ({ user, agentProfile, transaction
                 </button>
               </div>
 
+              {pendingWithdrawal && (
+                <div className="rounded-xl border border-orange-200 dark:border-orange-500/20 bg-orange-50 dark:bg-orange-500/10 p-3">
+                  <p className="text-[11px] font-black text-orange-800 dark:text-orange-300 uppercase tracking-wide">Pending Withdraw Code</p>
+                  <p className="mt-1 text-lg font-black tracking-widest text-orange-900 dark:text-orange-200">{pendingWithdrawal.claimCode}</p>
+                  <p className="text-[11px] mt-1 text-orange-700 dark:text-orange-300">
+                    Amount: ${pendingWithdrawal.amount.toFixed(2)} | Give this code to your agent to complete withdrawal.
+                  </p>
+                </div>
+              )}
+
               {/* Account Info */}
               <div className="grid grid-cols-2 gap-2">
                 <div className="p-3 rounded-xl bg-gray-50 dark:bg-white/[0.03] border border-gray-100 dark:border-white/5">
@@ -347,7 +358,7 @@ const WalletView: React.FC<WalletViewProps> = ({ user, agentProfile, transaction
 
               {/* Payment Method */}
               <div className="grid grid-cols-3 gap-2 mb-4">
-                {(activeTab === 'deposit' ? (['Crypto'] as Method[]) : (['Stripe', 'PayPal', 'Crypto'] as Method[])).map((m) => {
+                {((activeTab === 'deposit' || activeTab === 'withdraw') ? (['Crypto'] as Method[]) : (['Stripe', 'PayPal', 'Crypto'] as Method[])).map((m) => {
                   const MIcon = methodIcons[m];
                   return (
                     <button
@@ -379,6 +390,14 @@ const WalletView: React.FC<WalletViewProps> = ({ user, agentProfile, transaction
                       {agentProfile.email ? ` | ${agentProfile.email}` : ''}
                     </p>
                   )}
+                </div>
+              )}
+
+              {activeTab === 'withdraw' && pendingWithdrawal && (
+                <div className="mb-4 rounded-xl border border-orange-200 dark:border-orange-500/20 bg-orange-50 dark:bg-orange-500/10 p-3">
+                  <p className="text-xs font-bold text-orange-800 dark:text-orange-300">Use this withdrawal code with your agent:</p>
+                  <p className="text-xl font-black tracking-widest text-orange-900 dark:text-orange-200 mt-1">{pendingWithdrawal.claimCode}</p>
+                  <p className="text-[11px] mt-1 text-orange-700 dark:text-orange-300">Pending amount: ${pendingWithdrawal.amount.toFixed(2)}</p>
                 </div>
               )}
 
