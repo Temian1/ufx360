@@ -505,9 +505,11 @@ const App: React.FC = () => {
             transactions={walletTransactions}
             onDeposit={(amt, method) => handleWalletChange(amt, 'Deposit', method)}
             onWithdraw={(amt, method) => handleWalletChange(amt, 'Withdraw', method)}
+            onGoAccount={() => setCurrentView('account')}
+            onGoPromos={() => setCurrentView('promos')}
           />
         ) : currentView === 'promos' ? (
-          <PromotionsView promos={promos} onClaim={handleClaimPromo} />
+          <PromotionsView promos={promos} onClaim={handleClaimPromo} onGoWallet={() => setCurrentView('wallet')} />
         ) : currentView === 'account' ? (
           <AccountView
             user={currentUser}
